@@ -1,6 +1,7 @@
 const AWS = require('aws-sdk')
 
 const s3 = new AWS.S3();
+const fs = require('fs');
 
 
 exports.handler = function (event, context, callback) {
@@ -15,10 +16,12 @@ exports.handler = function (event, context, callback) {
     //add the new image that was uploaded above to the list of images
     //send back the new list to the second bucket
 
+    let file = fs.writeFile('images.json', event.Records[0].s3.object.key)
+    console.log(file)
     //send the added item to the second bucket
     let params = {
         Bucket: "lab17-ouput",
-        Key: decodeURIComponent(event.Records[0].s3.object.key.replace(/\+/g, ' '))
+        Key: file
     }
     s3.putObject(params, function (err, data) {
         if (err) console.log(err)
